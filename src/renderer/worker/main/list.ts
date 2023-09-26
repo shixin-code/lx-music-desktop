@@ -5,6 +5,8 @@ import { filterFileName, sortInsert, similar, arrPushByPosition, arrShuffle } fr
 import { joinPath, saveStrToFile } from '@common/utils/nodejs'
 import { createLocalMusicInfo } from '@renderer/utils/music'
 
+var PinYin = require('pinyin');
+// import PinYin from 'PinYin';
 
 /**
  * 过滤列表中已播放的歌曲
@@ -146,16 +148,14 @@ export const sortListMusicInfo = async(list: LX.Music.MusicInfo[], sortType: 'up
           case 'singer':
           case 'source':
             list.sort((a, b) => {
-              if (a[fieldName] == null) {
-                return b[fieldName] == null ? 0 : -1
-              } else return b[fieldName] == null ? 1 : a[fieldName].localeCompare(b[fieldName], localeId)
+              return PinYin.compare(a[fieldName], b[fieldName])
             })
             break
           case 'albumName':
             list.sort((a, b) => {
               if (a.meta.albumName == null) {
                 return b.meta.albumName == null ? 0 : -1
-              } else return b.meta.albumName == null ? 1 : a.meta.albumName.localeCompare(b.meta.albumName, localeId)
+              } else return b.meta.albumName == null ? 1 : a.meta.albumName.localeCompare(b.meta.albumName, localeId, { sensitivity: 'accent' })
             })
             break
         }
@@ -174,16 +174,14 @@ export const sortListMusicInfo = async(list: LX.Music.MusicInfo[], sortType: 'up
           case 'singer':
           case 'source':
             list.sort((a, b) => {
-              if (a[fieldName] == null) {
-                return b[fieldName] == null ? 0 : 1
-              } else return b[fieldName] == null ? -1 : b[fieldName].localeCompare(a[fieldName], localeId)
+              return PinYin.compare(b[fieldName], a[fieldName])
             })
             break
           case 'albumName':
             list.sort((a, b) => {
               if (a.meta.albumName == null) {
                 return b.meta.albumName == null ? 0 : 1
-              } else return b.meta.albumName == null ? -1 : b.meta.albumName.localeCompare(a.meta.albumName, localeId)
+              } else return b.meta.albumName == null ? -1 : b.meta.albumName.localeCompare(a.meta.albumName, localeId, { sensitivity: 'accent' })
             })
             break
         }
